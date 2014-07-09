@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+	<title>全屏滑动</title>
+	<style type="text/css">
+
+		html,body{
+			margin: 0;
+			padding: 0;
+			width:100%;
+            height:100%;
+		}
+		ul,li{
+			margin: 0;
+			padding: 0;
+		}
+		.fullPage{
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			text-align: center;
+			display: table;
+		}
+		.page_content{
+			vertical-align: middle;
+			display: table-cell;
+		}
+		.pageBackgound1{
+			background-color: #ccc;
+		}
+		.pageBackgound2{
+			background-color: rgb(75, 191, 195);
+		}
+		.pageBackgound3{
+			background-color: rgb(123, 170, 190);
+		}
+		.deactive{
+			display: none;
+		}
+		.fullPage-nav{
+			position: fixed;
+			top: 50%;
+			right: 15px;
+			z-index: 100;
+			opacity: 1;
+		}
+		.fullPage-nav li {
+			display: block;
+			width: 14px;
+			height: 13px;
+			margin: 7px;
+			position: relative;
+		}
+		.fullPage-nav li a {
+			display: block;
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.fullPage-nav span {
+			top: 2px;
+			left: 2px;
+			width: 8px;
+			height: 8px;
+			border: 1px solid #000;
+			background: rgba(0, 0, 0, 0);
+			-webkit-border-radius: 50%;
+			-moz-border-radius: 50%;
+			border-radius: 50%;
+			position: absolute;
+			z-index: 1;
+		}
+		.fullPage-nav li .active span{
+			background: #333;
+		}
+	</style>
+	<script type="text/javascript" src="Love_files/js/jquery.min.js"></script>
+	<script type="text/javascript">
+		var lastScrollTop = 0;
+		var num = 0;
+		var countPage = 3;
+		var scrolled = false;
+		var hashChanged = false;
+		$(document).ready(function(){
+
+			$("#page1").removeClass("deactive");
+			$("#page2").removeClass("deactive");
+			$("#page3").removeClass("deactive");
+			var liObjList = $("#fullpage_nav").find("li::first a");
+			liObjList.addClass("active");
+
+			var linkList = $("#fullpage_nav").find("li a");
+			linkList.on("click",function(){
+				linkList.removeClass("active");
+				$(this).addClass("active");
+				window.location.hash = this.hash;
+			});
+		});
+		$(window).resize(function() {
+		    var newWidth = $(this).width();
+		    var newHeight = $(this).height();
+		    $("#page1").height(newHeight);
+		    $("#page1").find(".page_content").height(newHeight);
+		    var fullpage_nav = $("#fullpage_nav");
+		    fullpage_nav.css("margin-top",0 - fullpage_nav.height()/2);
+
+		});
+		$(window).bind("hashchange",function(event){
+			hashChanged = true;
+		});
+		/*$(window).off("scroll", scrollHandler);
+		function scrollHandler(event){
+
+		}*/
+		$(window).scroll(function(event){
+			var st = $(this).scrollTop();
+			if(hashChanged == false){
+				
+				
+			   if (st > lastScrollTop){
+			       // downscroll code
+			       num++;
+			   } else {
+			      // upscroll code
+			      num--;
+			   }
+
+			   var linkList = $("#fullpage_nav").find("li a");
+			   var index = num%countPage < 0 ? num%countPage+countPage:num%countPage;
+			   num = num >= countPage ? 0 : num;
+			   $(linkList[index]).trigger("click");
+			}
+			else{
+				hashChanged = false;
+		   	}
+		   	
+			lastScrollTop = st;
+
+
+		});
+	</script>
+</head>
+<body>
+	<div id="page1" class="fullPage pageBackgound1 deactive">
+		<div class="page_content">page1</div>
+	</div>
+	<div id="page2" class="fullPage pageBackgound2 deactive">
+		<div class="page_content">page2</div>
+		
+	</div>
+	<div id="page3" class="fullPage pageBackgound3 deactive">
+		<div class="page_content">page3</div>
+	</div>
+
+	<div id="fullpage_nav" class="fullPage-nav">
+		<ul>
+			<li>
+				<a href="#page1" class=""><span></span></a>
+			</li>
+			<li>
+				<a href="#page2" class=""><span></span></a>
+			</li>
+			<li>
+				<a href="#page3" class=""><span></span></a>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>
