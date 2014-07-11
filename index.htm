@@ -78,7 +78,7 @@
 			background: #333;
 		}
 	</style>
-	<script type="text/javascript" src="Love_files/js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript">
 		var lastScrollTop = 0;
 		var num = 0;
@@ -88,8 +88,9 @@
 		$(document).ready(function(){
 
 			$("#page1").removeClass("deactive");
-			$("#page2").removeClass("deactive");
-			$("#page3").removeClass("deactive");
+			window.location.hash = "#page1";
+			/*$("#page2").removeClass("deactive");
+			$("#page3").removeClass("deactive");*/
 			var liObjList = $("#fullpage_nav").find("li::first a");
 			liObjList.addClass("active");
 
@@ -97,9 +98,14 @@
 			linkList.on("click",function(){
 				linkList.removeClass("active");
 				$(this).addClass("active");
+				SelectPage(window.location.hash,this.hash);
 				window.location.hash = this.hash;
 			});
 		});
+		function SelectPage(lastPageId,newPageId){
+			$(lastPageId).addClass("deactive");
+			$(newPageId).removeClass("deactive");
+		}
 		$(window).resize(function() {
 		    var newWidth = $(this).width();
 		    var newHeight = $(this).height();
@@ -112,10 +118,18 @@
 		$(window).bind("hashchange",function(event){
 			hashChanged = true;
 		});
-		/*$(window).off("scroll", scrollHandler);
-		function scrollHandler(event){
 
-		}*/
+		$(window).bind("mousewheel",function(e){
+			if(e.originalEvent.wheelDelta / 120 > 0){
+				num--;
+			}else{
+				num++;
+			}
+			var linkList = $("#fullpage_nav").find("li a");
+			var index = num%countPage < 0 ? num%countPage+countPage:num%countPage;
+			num = num >= countPage ? 0 : num;
+			$(linkList[index]).trigger("click");
+		});
 		$(window).scroll(function(event){
 			var st = $(this).scrollTop();
 			if(hashChanged == false){
