@@ -9,8 +9,11 @@
 			margin: 0;
 			padding: 0;
 			width:100%;
-            height:100%;
+            overflow: hidden;
+            height: 100%;
+            font-size: 34.06%;
 		}
+
 		ul,li{
 			margin: 0;
 			padding: 0;
@@ -77,20 +80,18 @@
 		.fullPage-nav li .active span{
 			background: #333;
 		}
+
+		.fullpage-wrapper{
+			position: relative;
+			height: 100%;
+		}
 	</style>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript">
-		var lastScrollTop = 0;
 		var num = 0;
 		var countPage = 3;
-		var scrolled = false;
-		var hashChanged = false;
 		$(document).ready(function(){
 
-			$("#page1").removeClass("deactive");
-			window.location.hash = "#page1";
-			/*$("#page2").removeClass("deactive");
-			$("#page3").removeClass("deactive");*/
 			var liObjList = $("#fullpage_nav").find("li::first a");
 			liObjList.addClass("active");
 
@@ -98,14 +99,14 @@
 			linkList.on("click",function(){
 				linkList.removeClass("active");
 				$(this).addClass("active");
-				SelectPage(window.location.hash,this.hash);
-				window.location.hash = this.hash;
+
+				var index = linkList.index($(this));
+				var top = 0 - index * $(window).height();
+				
+				$("#pagecontainer").animate({top:top+"px"},700);
 			});
 		});
-		function SelectPage(lastPageId,newPageId){
-			$(lastPageId).addClass("deactive");
-			$(newPageId).removeClass("deactive");
-		}
+
 		$(window).resize(function() {
 		    var newWidth = $(this).width();
 		    var newHeight = $(this).height();
@@ -115,71 +116,50 @@
 		    fullpage_nav.css("margin-top",0 - fullpage_nav.height()/2);
 
 		});
-		$(window).bind("hashchange",function(event){
-			hashChanged = true;
-		});
 
 		$(window).bind("mousewheel",function(e){
+			//scroll up or down
 			if(e.originalEvent.wheelDelta / 120 > 0){
 				num--;
 			}else{
 				num++;
 			}
+
 			var linkList = $("#fullpage_nav").find("li a");
 			var index = num%countPage < 0 ? num%countPage+countPage:num%countPage;
 			num = num >= countPage ? 0 : num;
 			$(linkList[index]).trigger("click");
+
+			var top = 0 - index * $(window).height();
+			$("#pagecontainer").animate({top:top+"px"},700);
 		});
-		$(window).scroll(function(event){
-			var st = $(this).scrollTop();
-			if(hashChanged == false){
-				
-				
-			   if (st > lastScrollTop){
-			       // downscroll code
-			       num++;
-			   } else {
-			      // upscroll code
-			      num--;
-			   }
-
-			   var linkList = $("#fullpage_nav").find("li a");
-			   var index = num%countPage < 0 ? num%countPage+countPage:num%countPage;
-			   num = num >= countPage ? 0 : num;
-			   $(linkList[index]).trigger("click");
-			}
-			else{
-				hashChanged = false;
-		   	}
-		   	
-			lastScrollTop = st;
 
 
-		});
 	</script>
 </head>
 <body>
-	<div id="page1" class="fullPage pageBackgound1 deactive">
-		<div class="page_content">page1</div>
-	</div>
-	<div id="page2" class="fullPage pageBackgound2 deactive">
-		<div class="page_content">page2</div>
-		
-	</div>
-	<div id="page3" class="fullPage pageBackgound3 deactive">
-		<div class="page_content">page3</div>
+	<div id="pagecontainer" class="fullpage-wrapper">
+		<div id="page1" class="fullPage pageBackgound1">
+			<div class="page_content">page1</div>
+		</div>
+		<div id="page2" class="fullPage pageBackgound2">
+			<div class="page_content">page2</div>
+		</div>
+		<div id="page3" class="fullPage pageBackgound3">
+			<div class="page_content">page3</div>
+		</div>
 	</div>
 
 	<div id="fullpage_nav" class="fullPage-nav">
 		<ul>
 			<li>
-				<a href="#page1" class=""><span></span></a>
+				<a href="#" class=""><span></span></a>
 			</li>
 			<li>
-				<a href="#page2" class=""><span></span></a>
+				<a href="#" class=""><span></span></a>
 			</li>
 			<li>
-				<a href="#page3" class=""><span></span></a>
+				<a href="#" class=""><span></span></a>
 			</li>
 		</ul>
 	</div>
