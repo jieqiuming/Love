@@ -90,6 +90,21 @@
 	<script type="text/javascript">
 		var num = 0;
 		var countPage = 3;
+		var debounce = function(func, wait, immediate) {
+			var timeout;
+			return function() {
+				var context = this, args = arguments;
+				var later = function() {
+					timeout = null;
+					if (!immediate) func.apply(context, args);
+				};
+				var callNow = immediate && !timeout;
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+				if (callNow) func.apply(context, args);
+			};
+		};
+
 		$(document).ready(function(){
 
 			var liObjList = $("#fullpage_nav").find("li::first a");
@@ -116,8 +131,9 @@
 		    fullpage_nav.css("margin-top",0 - fullpage_nav.height()/2);
 
 		});
+		// Create the listener function
+		var updateLayout = debounce(function(e) {
 
-		$(window).bind("mousewheel",function(e){
 			//scroll up or down
 			if(e.originalEvent.wheelDelta / 120 > 0){
 				num--;
@@ -129,12 +145,9 @@
 			var index = num%countPage < 0 ? num%countPage+countPage:num%countPage;
 			num = num >= countPage ? 0 : num;
 			$(linkList[index]).trigger("click");
-
-			var top = 0 - index * $(window).height();
-			$("#pagecontainer").animate({top:top+"px"},700);
-		});
-
-
+			
+		}, 1000); // Maximum run of once per 500 milliseconds
+		$(window).bind("mousewheel",updateLayout);
 	</script>
 </head>
 <body>
